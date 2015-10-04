@@ -19,7 +19,10 @@ main = do
     let byMonth =  groupBy (\a b -> (monthOfDate a) == (monthOfDate b))
     let byWeek = groupBy (\a b -> (weekNumber a) == (weekNumber b))
     let monthByWeek = map byWeek
-    let dayOfWeekDate = map dayOfDate
-    let dayOfMonthDate = map dayOfWeekDate
-    print $ map dayOfMonthDate (monthByWeek . byMonth $ datesInYear 2015)
+    let printDayOfWeekDate ls = do
+        print $ map dayOfDate ls
+    let printDayOfMonthDate ls = do
+        mapM_ printDayOfWeekDate ls
+        print "---"
+    mapM_ printDayOfMonthDate (monthByWeek . byMonth $ datesInYear 2015)
 
