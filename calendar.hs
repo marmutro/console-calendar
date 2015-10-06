@@ -1,4 +1,5 @@
 import Data.List
+import Data.List.Split
 import Data.Time.Calendar
 import Data.Time.Calendar.OrdinalDate
 import Data.Time.Format
@@ -10,6 +11,9 @@ type Month = [Week]
 
 listToString :: [a] -> (a -> String) -> String
 listToString ls formatter = foldr (\v acc -> formatter v ++ acc) "" ls
+
+joinStrings :: [[String]] -> [String]
+joinStrings ls = map (\a -> intercalate " " a) ls
 
 
 datesInYear year = [beginOfYear year..endOfYear year] where
@@ -49,9 +53,10 @@ showMonth ls = [showMonthName] ++ weeks ++ padding where
     padding = replicate (6 - (length ls)) emptyLine
     emptyLine = replicate 21 ' '
     
-monthToLines :: [Month] -> [String]
-monthToLines ls = concat $ map showMonth ls
 
 main = do 
-    let lines = monthToLines (monthByWeek . byMonth $ datesInYear 2015)
-    mapM_ print lines
+    let months = map showMonth (monthByWeek . byMonth $ datesInYear 2015)
+    let cl = chunksOf 3 months
+    let tl = map transpose cl
+    let lines = concat $ map joinStrings tl
+    mapM_ putStrLn lines
