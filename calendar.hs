@@ -4,6 +4,7 @@ import Data.Time.Calendar
 import Data.Time.Calendar.OrdinalDate
 import Data.Time.Format
 import System.Locale
+import System.Environment
 import Text.Printf
 
 type Week = [Day]
@@ -65,8 +66,11 @@ showMonth ls = [showMonthName] ++ weeks ++ padding where
     
 
 main = do 
-    let months = map showMonth (monthByWeek . byMonth $ datesInYear 2015)
-    let cl = chunksOf 3 months
+    args <- getArgs
+    let year = if length args >= 1 then read $ args !! 0 else 2015
+    let cols = if length args >= 2 then read $ args !! 1 else 3
+    let months = map showMonth (monthByWeek . byMonth $ datesInYear year)
+    let cl = chunksOf cols months
     let tl = map transpose cl
     let lines = concat $ map joinStrings tl
     mapM_ putStrLn lines
