@@ -2,6 +2,7 @@ import Data.List
 import Data.List.Split
 import Data.Time.Calendar
 import Data.Time.Calendar.OrdinalDate
+import Data.Time.Clock
 import Data.Time.Format
 import System.Locale
 import System.Environment
@@ -64,11 +65,17 @@ showMonth ls = [showMonthName] ++ weeks ++ padding where
     padding = replicate (6 - (length ls)) emptyLine
     emptyLine = replicate 21 ' '
     
+getCurrentYear = do
+	utc <- getCurrentTime
+	let now = utctDay utc
+	let (year, _, _) = toGregorian now
+	return year
 
 main = do 
     args <- getArgs
-    let year = if length args >= 1 then read $ args !! 0 else 2015
-    let cols = if length args >= 2 then read $ args !! 1 else 3
+    thisYear <- getCurrentYear
+    let cols = if length args >= 1 then read $ args !! 0 else 3
+    let year = if length args >= 2 then read $ args !! 1 else thisYear
     let months = map showMonth (monthByWeek . byMonth $ datesInYear year)
     let cl = chunksOf cols months
     let tl = map transpose cl
