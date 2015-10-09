@@ -1,11 +1,11 @@
+module Calendar where
+
 import Data.List
-import Data.List.Split
 import Data.Time.Calendar
 import Data.Time.Calendar.OrdinalDate
 import Data.Time.Clock
 import Data.Time.Format
-import System.Locale
-import System.Environment
+-- import System.Locale
 import Text.Printf
 
 type Week = [Day]
@@ -66,18 +66,8 @@ showMonth ls = [showMonthName] ++ weeks ++ padding where
     emptyLine = replicate 21 ' '
     
 getCurrentYear = do
-	utc <- getCurrentTime
-	let now = utctDay utc
-	let (year, _, _) = toGregorian now
-	return year
+    utc <- getCurrentTime
+    let now = utctDay utc
+    let (year, _, _) = toGregorian now
+    return year
 
-main = do 
-    args <- getArgs
-    thisYear <- getCurrentYear
-    let cols = if length args >= 1 then read $ args !! 0 else 3
-    let year = if length args >= 2 then read $ args !! 1 else thisYear
-    let months = map showMonth (monthByWeek . byMonth $ datesInYear year)
-    let cl = chunksOf cols months
-    let tl = map transpose cl
-    let lines = concat $ map joinStrings tl
-    mapM_ putStrLn lines
