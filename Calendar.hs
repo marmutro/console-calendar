@@ -1,12 +1,13 @@
 module Calendar where
 
 import Data.List
+import Data.List.Split
 import Data.Time.Calendar
 import Data.Time.Calendar.OrdinalDate
-import Data.Time.Clock
 import Data.Time.Format
--- import System.Locale
+import Data.Time.Clock
 import Text.Printf
+
 
 type Week = [Day]
 type Month = [Week]
@@ -64,10 +65,16 @@ showMonth ls = [showMonthName] ++ weeks ++ padding where
     weeks = map showWeek ls
     padding = replicate (6 - (length ls)) emptyLine
     emptyLine = replicate 21 ' '
-    
+
+showCalendar :: Integer -> Int -> [String]
+showCalendar year cols =    
+    let months = map showMonth (monthByWeek . byMonth $ datesInYear year)
+        cl = chunksOf cols months
+        tl = map transpose cl   
+    in concat $ map joinStrings tl
+
 getCurrentYear = do
     utc <- getCurrentTime
     let now = utctDay utc
     let (year, _, _) = toGregorian now
     return year
-
